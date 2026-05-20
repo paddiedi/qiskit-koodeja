@@ -1,5 +1,4 @@
 # qiskit-koodeja
-Kasattu erinäköisiä kvanttikoodeja, jotka implementoi erilaisia kvantti-algoritmeja.
-Koodattu Pythonilla ja Jupyter-notebookilla.
+Kvantti-algoritmi koodeja. Tehty Pythonilla\Jupyterillä.
 
 Näitä koodeja saa ihan vapaasti käyttää.

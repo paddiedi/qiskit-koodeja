@@ -11,16 +11,29 @@ import numpy as np
 # This is an implementation of the 7,1,3 Steane code, in the stabilizer formalism.
 
 def gen_hamming_code():
-    columns = []
-    for b1 in (0,1):
-        for b2 in (0,1):
-             for b3 in (0,1):
-                  columns.append()
+    matrix = []
+    for d1 in (0,1):
+        for d2 in (0,1):
+            for d3 in (0,1):
+                matrix.append((d1,d2,d3))
+    
+    return np.array(matrix)[1:].T
 
+def gen_steane_code(matrix):
+    simplex_values = []
+    # The most cursed shi I have ever seen
+    for d1 in (0,1):
+        for d2 in (0,1):
+            for d3 in (0,1):
+                # Group theory stuff, check out cosets n stuff
+                simplex_values.append(d1*matrix[0] ^ d2*matrix[1] ^ d3*matrix[2])
 
+    simplex_values = np.array(simplex_values)      # 0_L qubits
+    dual_values = simplex_values ^ [1,1,1,1,1,1,1] # 1_L qubits
 
-def css_generate_basis():
-	return gen_hamming_code()
+    return simplex_values, dual_values
 
 if __name__ == "__main__":
-     gen_hamming_code()
+    pass
+
+# Next one does the XZ thingy

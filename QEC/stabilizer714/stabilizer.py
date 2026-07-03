@@ -11,7 +11,9 @@ import numpy as np
 
 
 # This is an implementation of the 7,1,3 Steane code, in the stabilizer formalism.
-
+class Stabilizer_x():
+    def __init__(index):
+        pass
 
 def simulate_measurements(qc_samples, shots):
     backend = AerSimulator(seed_simulator = random.randint(0,10000000))
@@ -43,12 +45,6 @@ def gen_steane_code(matrix):
 
     return simplex_values, dual_values
 
-def add_x_gate(qubit,a):
-    pass
-
-def add_z_gate(qubit,a):
-    pass
-
 def prepare_state_amp(steane_matrix):
     bit_string = ""
     n_string = len(steane_matrix[0])
@@ -60,11 +56,28 @@ def prepare_state_amp(steane_matrix):
         amps[int(bit_string,2)] = 1/np.sqrt(n_rows)
         bit_string = ""
     return amps
+# Just copies of the same function lol
+def gen_stabilizer_x(qc , hamming_matrix):
+    # Again, we need to iterate through a matrix!
+    for row in hamming_matrix:
+        for i,b in enumerate(row):
+            if b ^ 1 == 0:
+                qc.x(i)
+            else:
+                qc.id(i)
+
+def gen_stabilizer_z(qc, hamming_matrix):
+    # Again, we need to iterate through a matrix!
+    for row in hamming_matrix:
+        for i,b in enumerate(row):
+            if b ^ 1 == 0:
+                qc.z(i)
+                qc.id(i)
 
 if __name__ == "__main__":
     # Apparently we need 2 different circuits (because qiskit is goofy)
     qc_simplex = QuantumCircuit(7) # 7 sized qubits
-    qc_dual = QuantumCircuit(7) # 7 sized qubits
+    qc_dual = QuantumCircuit(7)
     hamming_code = gen_hamming_code()
     pair_steane_matrix = gen_steane_code(hamming_code)
     simplex_matrix = pair_steane_matrix[0] # |0_L>
@@ -76,9 +89,20 @@ if __name__ == "__main__":
     qc_simplex.initialize(amp_simplex, [i for i in range(0,len(simplex_matrix)-1)])
     qc_dual.initialize(amp_dual, [i for i in range(0, len(dual_matrix)-1)])
     #init_simplex = Statevector
+
+    gen_stabilizer_x(qc_simplex, hamming_code)
+    gen_stabilizer_z(qc_simplex, hamming_code)
+
+    gen_stabilizer_x(qc_dual, hamming_code)
+    gen_stabilizer_z(qc_dual, hamming_code)
+
     qc_simplex_samples = qc_simplex.copy()
     qc_simplex_samples.measure_all()
-    result = simulate_measurements(qc_simplex_samples, 1000)
-    plot_histogram(result, sort='asc')
+    qc_dual_samples = qc_dual.copy()
+    qc_dual_samples.measure_all()
 
+    qc_simplex.draw("mpl")
+    #result = simulate_measurements(qc_simplex_samples, 100000)
+    #plot_histogram(result.get_counts(), sort='asc')
+    plt.show()
 # Next one does the XZ thingy

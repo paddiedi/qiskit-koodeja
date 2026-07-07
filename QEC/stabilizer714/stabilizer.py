@@ -130,6 +130,25 @@ def check_error(qc_samples, generators, Classtype: Generator):
                 raise TypeError
             break
 
+def noise(qc):
+    error_type = random.randint(0,2)
+    # X error
+    if error_type == 0:
+        error_loc = random.randint(0, qc.num_qubits-7)
+        qc.x(error_loc)
+        print(f'Error type: X on position {error_loc}')
+    # Z error
+    if error_type == 1:
+        error_loc = random.randint(0, qc.num_qubits-7)
+        qc.z(error_loc)
+        print(f'Error type: Z on position {error_loc}')
+    # Z and X errors
+    if error_type == 2:
+        error_loc_x = random.randint(0, qc.num_qubits-7)
+        error_loc_z = random.randint(0, qc.num_qubits-7)
+        qc.x(error_loc_x)
+        qc.z(error_loc_z)
+        print(f'Error type: X & Z on positions X: {error_loc_x} and Z: {error_loc_z}')
 
 def post_processing(qc_samples, errors):
     pass
@@ -152,7 +171,9 @@ if __name__ == "__main__":
     qc_dual.initialize(amp_dual, [i for i in range(0, len(dual_matrix[0]))])
     #init_simplex = Statevector
     #qc_simplex.z(6)
-    qc_simplex.x(2)
+
+    noise(qc_simplex)
+
     # X-generators
     generators_simplex["X"] = create_generators(qc_simplex, 7, hamming_code, Generator_x)
     generators_dual["X"] = create_generators(qc_dual, 7, hamming_code, Generator_x)
